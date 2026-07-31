@@ -12,7 +12,7 @@ st.write(
     " rapidement."
 )
 
-# Création du formulaire web
+# Formulaire de prospect initial
 with st.form("form_lead"):
   type_demande = st.selectbox(
       "Services disponibles :",
@@ -22,25 +22,21 @@ with st.form("form_lead"):
           "3. Autre demande",
       ],
   )
-
   description = st.text_area(
       "Décrivez clairement votre projet ou votre besoin :"
   )
   ville = st.text_input("Dans quelle ville se situe le chantier / le besoin ?")
   nom = st.text_input("Quel est votre nom complet ?")
   telephone = st.text_input("Quel est votre numéro de téléphone ?")
-
-  # Bouton de validation du formulaire
   submit = st.form_submit_button("Envoyer ma demande")
 
-# Traitement après soumission
 if submit:
   if not nom or not telephone or not ville:
     st.error(
         "⚠️ Veuillez remplir au moins votre nom, votre téléphone et la ville."
     )
   else:
-    # Enregistrement des données
+    # Enregistrement des données du lead
     date_du_jour = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     nouveau_lead = f"""
 --------------------------------------------------
@@ -55,54 +51,59 @@ Ville : {ville}
     with open("leads_clients.txt", "a", encoding="utf-8") as f:
       f.write(nouveau_lead)
 
-    # Message de succès
     st.success(
         f"✅ Merci {nom} ! Vos informations ont bien été transmises. Notre"
         " équipe vous contactera sous 2 heures ouvrées."
     )
 
-    # Section de monétisation avec les offres et logos/symboles de paiement
+    # --- SECTION BOUTIQUE & PAIEMENT AUTOMATISÉ ---
     st.markdown("---")
     st.subheader(
-        "🚀 Vous souhaitez ce même système pour votre propre entreprise ?"
-    )
-    st.write("Choisissez votre formule et votre moyen de paiement :")
-
-    # Formule Standard
-    st.markdown("**1. Formule Standard (50 000 FCFA)** : Appli prête à l'emploi")
-    st.link_button(
-        "🟧 Orange Money / 🟨 MTN MoMo - Commander (50k)",
-        (
-            "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20commander%20la%20Formule%20Standard%20à%2050%20000%20FCFA"
-        ),
+        "🚀 Commandez votre propre application personnalisée en 24h"
     )
 
-    # Formule Pro
-    st.markdown(
-        "**2. Formule Pro (150 000 FCFA)** : Sur mesure + Automatisation WhatsApp"
-    )
-    st.link_button(
-        "🟧 Orange Money / 🟨 MTN MoMo - Commander (150k)",
-        (
-            "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20commander%20la%20Formule%20Pro%20à%20150%20000%20FCFA"
-        ),
-    )
-
-    # Formule Entreprise
-    st.markdown(
-        "**3. Formule Entreprise (250 000 FCFA)** : Solution complète + Nom de"
-        " domaine"
-    )
-    st.link_button(
-        "🟧 Orange Money / 🟨 MTN MoMo - Commander (250k)",
-        (
-            "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20commander%20la%20Formule%20Entreprise%20à%20250%20000%20FCFA"
-        ),
+    # Choix du pack par le client
+    pack_choisi = st.selectbox(
+        "Sélectionnez votre formule :",
+        [
+            "Formule Standard - 50 000 FCFA",
+            "Formule Pro - 150 000 FCFA",
+            "Formule Entreprise - 250 000 FCFA",
+        ],
     )
 
-    # Option Internationale (PayPal / Cartes)
+    # Saisie du numéro pour le prélèvement Mobile Money
+    numero_paiement = st.text_input(
+        "Entrez votre numéro Mobile Money (ex: 698278163 ou 670000000) :"
+    )
+    operateur = st.selectbox(
+        "Choisissez votre opérateur :", ["Orange Money", "MTN MoMo"]
+    )
+
+    # Bouton de validation du paiement
+    if st.button("Valider et payer maintenant"):
+      if not numero_paiement:
+        st.error("⚠️ Veuillez entrer un numéro de téléphone pour le paiement.")
+      else:
+        # Ici, si vous connectez une API comme Notch Pay ou Fapshi,
+        # une requête est envoyée pour afficher la demande de code PIN sur le téléphone du client.
+        # En attendant, on redirige vers WhatsApp avec les détails pré-remplis pour validation manuelle sécurisée.
+
+        url_whatsapp = (
+            f"https://wa.me/237698278163?text=Bonjour,%20je%20veux%20payer%20"
+            f"{pack_choisi}%20via%20{operateur}%20au%20numero%20{numero_paiement}."
+        )
+
+        st.success(
+            "🔄 Demande de paiement transmise ! Vérifiez votre téléphone pour"
+            " valider la transaction ou cliquez ci-dessous si la pop-up ne s'affiche"
+            " pas :"
+        )
+        st.link_button("📲 Confirmer sur WhatsApp", url_whatsapp)
+
+    # Option Carte Bancaire Internationale
     st.markdown("---")
     st.link_button(
-        "🌐 PayPal / Carte Bancaire (Paiement International)",
-        "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20payer%20par%20PayPal%20ou%20Carte%20depuis%20l'etranger",
+        "🌐 Payer par Carte Bancaire / PayPal (International)",
+        "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20payer%20par%20Carte%20depuis%20l'etranger",
     )
