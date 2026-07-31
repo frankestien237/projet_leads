@@ -1,4 +1,5 @@
 import datetime
+import requests
 import streamlit as st
 
 # Configuration de la page web
@@ -12,7 +13,7 @@ st.write(
     " rapidement."
 )
 
-# 1. Formulaire prospect classique
+# 1. Formulaire prospect
 with st.form("form_lead"):
   type_demande = st.selectbox(
       "Services disponibles :",
@@ -36,7 +37,7 @@ if submit:
         "⚠️ Veuillez remplir au moins votre nom, votre téléphone et la ville."
     )
   else:
-    # Enregistrement des données
+    # Enregistrement des données du lead
     date_du_jour = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     nouveau_lead = f"""
 --------------------------------------------------
@@ -56,7 +57,7 @@ Ville : {ville}
         " équipe vous contactera sous 2 heures ouvrées."
     )
 
-    # 2. Section de Commande & Paiement Automatisé
+    # 2. Section de Paiement Automatisé Notch Pay
     st.markdown("---")
     st.subheader(
         "🚀 Commandez votre propre application personnalisée en 24h"
@@ -71,36 +72,59 @@ Ville : {ville}
         ],
     )
 
-    # Le client entre son propre numéro pour déclencher le paiement USSD
+    montant = 50000
+    if "Pro" in formule_choisie:
+      montant = 150000
+    elif "Entreprise" in formule_choisie:
+      montant = 250000
+
     num_paiement = st.text_input(
-        "Entrez votre numéro Mobile Money (ex: 698xxxxxx ou 670xxxxxx) :"
-    )
-    operateur_mobile = st.selectbox(
-        "Opérateur :", ["Orange Money", "MTN MoMo"]
+        "Entrez votre numéro Mobile Money (Orange ou MTN) :"
     )
 
-    if st.button("Lancer la demande de paiement sur mon téléphone"):
+    if st.button("Lancer le paiement sécurisé"):
       if not num_paiement:
-        st.error("⚠️ Veuillez entrer un numéro de téléphone valide.")
+        st.error("⚠️ Veuillez entrer un numéro de téléphone.")
       else:
-        # Simulation du déclenchement de la requête USSD vers le client
-        # (Ici, le lien redirige vers WhatsApp avec le numéro pré-saisi pour une validation instantanée et sécurisée)
-        lien_validation = (
-            f"https://wa.me/237698278163?text=Bonjour,%20je%20veux%20commander%20"
-            f"{formule_choisie}%20via%20{operateur_mobile}%20au%20numero%20{num_paiement}."
-            f"%20Envoi%20de%20la%20demande%20de%20paiement."
-        )
+        # Configuration de la requête vers l'API Notch Pay
+        url_notch = "https://api.notchpay.co/payments"
 
-        st.info(
-            f"📲 Une notification USSD est envoyée au **{num_paiement}**."
-            " Veuillez entrer votre code secret sur votre téléphone pour valider"
-            " la transaction."
-        )
-        st.link_button(
-            "Finaliser la confirmation sur WhatsApp", lien_validation
-        )
+        headers = {
+            "Authorization": (
+                "sk_test.c1kgb3QK8qIvRncPIm62lqqCILZC5zTqIEBTSMWDHGGYfKqYHE..."
+            ),  # Votre clé secrète de test visible sur l'image
+            "Content-Type": "application/json",
+        }
 
-    # Option Internationale (Cartes)
+        payload = {
+            "amount": montant,
+            "currency": "XAF",
+            "phone": num_paiement,
+            "description": f"Paiement {formule_choisie}",
+            "email": "client@example.com",
+            "name": nom,
+        }
+
+        try:
+          response = requests.post(url_notch, json=payload, headers=headers)
+          data = response.json()
+
+          if response.status_code == 200 or response.status_code == 201:
+            st.success(
+                "🎉 Demande de paiement initialisée avec succès ! Vérifiez votre"
+                " téléphone pour entrer votre code secret."
+            )
+          else:
+            st.error(
+                f"❌ Erreur lors de l'initialisation : {data.get('message', 'Vérifiez les informations')}"
+            )
+        except Exception as e:
+          st.error(
+              "⚠️ Impossible de contacter la passerelle de paiement pour le"
+              " moment."
+          )
+
+    # Option Internationale
     st.markdown("---")
     st.link_button(
         "🌐 Payer par Carte Bancaire / PayPal (International)",
