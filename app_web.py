@@ -33,9 +33,8 @@ with st.form("form_lead"):
   # Bouton de validation du formulaire
   submit = st.form_submit_button("Envoyer ma demande")
 
-# Traitement une fois que le formulaire est soumis (en dehors du "with st.form")
+# Traitement après soumission
 if submit:
-  # Validation basique
   if not nom or not telephone or not ville:
     st.error(
         "⚠️ Veuillez remplir au moins votre nom, votre téléphone et la ville."
@@ -56,24 +55,31 @@ Ville : {ville}
     with open("leads_clients.txt", "a", encoding="utf-8") as f:
       f.write(nouveau_lead)
 
-    # Message de succès affiché sur la page web
+    # Message de succès
     st.success(
         f"✅ Merci {nom} ! Vos informations ont bien été transmises. Notre"
         " équipe vous contactera sous 2 heures ouvrées."
     )
 
-    # Ajout de l'appel à l'action pour monétiser l'application
+    # Section de monétisation avec choix des modes de paiement
     st.markdown("---")
-    st.subheader("🚀 Vous aimez ce système pour votre propre entreprise ?")
-    st.write(
-        "Commandez votre propre application personnalisée à vos couleurs en"
-        " 24h."
+    st.subheader(
+        "🚀 Vous souhaitez ce même système pour votre propre entreprise ?"
     )
+    st.write("Choisissez votre mode de règlement pour commander en 24h :")
 
+    # Option 1 : Paiement Local (Orange Money / MTN MoMo) via WhatsApp
     st.link_button(
-        "Commander votre appli (50 000 FCFA)",
+        "📱 Payer par Mobile Money (Orange / MTN)",
         (
             "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20commander"
-            "%20cette%20application%20pour%20mon%20entreprise"
+            "%20l'application%20par%20Mobile%20Money%20(50%20000%20FCFA)"
         ),
+    )
+
+    # Option 2 : Carte Bancaire (Pour l'international / Étranger)
+    # Remplacez le lien ci-dessous par votre lien de paiement Stripe, Fapshi, Notch Pay ou CinetPay
+    st.link_button(
+        "🌍 Payer par Carte Bancaire (International)",
+        "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20payer%20par%20Carte%20Bancaire%20depuis%20l'etranger",
     )
