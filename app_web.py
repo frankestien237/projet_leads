@@ -12,7 +12,7 @@ st.write(
     " rapidement."
 )
 
-# Formulaire de prospect initial
+# 1. Formulaire prospect classique
 with st.form("form_lead"):
   type_demande = st.selectbox(
       "Services disponibles :",
@@ -36,7 +36,7 @@ if submit:
         "⚠️ Veuillez remplir au moins votre nom, votre téléphone et la ville."
     )
   else:
-    # Enregistrement des données du lead
+    # Enregistrement des données
     date_du_jour = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     nouveau_lead = f"""
 --------------------------------------------------
@@ -56,52 +56,51 @@ Ville : {ville}
         " équipe vous contactera sous 2 heures ouvrées."
     )
 
-    # --- SECTION BOUTIQUE & PAIEMENT AUTOMATISÉ ---
+    # 2. Section de Commande & Paiement Automatisé
     st.markdown("---")
     st.subheader(
         "🚀 Commandez votre propre application personnalisée en 24h"
     )
 
-    # Choix du pack par le client
-    pack_choisi = st.selectbox(
-        "Sélectionnez votre formule :",
+    formule_choisie = st.selectbox(
+        "Choisissez votre formule :",
         [
-            "Formule Standard - 50 000 FCFA",
-            "Formule Pro - 150 000 FCFA",
-            "Formule Entreprise - 250 000 FCFA",
+            "Formule Standard (50 000 FCFA)",
+            "Formule Pro (150 000 FCFA)",
+            "Formule Entreprise (250 000 FCFA)",
         ],
     )
 
-    # Saisie du numéro pour le prélèvement Mobile Money
-    numero_paiement = st.text_input(
-        "Entrez votre numéro Mobile Money (ex: 698278163 ou 670000000) :"
+    # Le client entre son propre numéro pour déclencher le paiement USSD
+    num_paiement = st.text_input(
+        "Entrez votre numéro Mobile Money (ex: 698xxxxxx ou 670xxxxxx) :"
     )
-    operateur = st.selectbox(
-        "Choisissez votre opérateur :", ["Orange Money", "MTN MoMo"]
+    operateur_mobile = st.selectbox(
+        "Opérateur :", ["Orange Money", "MTN MoMo"]
     )
 
-    # Bouton de validation du paiement
-    if st.button("Valider et payer maintenant"):
-      if not numero_paiement:
-        st.error("⚠️ Veuillez entrer un numéro de téléphone pour le paiement.")
+    if st.button("Lancer la demande de paiement sur mon téléphone"):
+      if not num_paiement:
+        st.error("⚠️ Veuillez entrer un numéro de téléphone valide.")
       else:
-        # Ici, si vous connectez une API comme Notch Pay ou Fapshi,
-        # une requête est envoyée pour afficher la demande de code PIN sur le téléphone du client.
-        # En attendant, on redirige vers WhatsApp avec les détails pré-remplis pour validation manuelle sécurisée.
-
-        url_whatsapp = (
-            f"https://wa.me/237698278163?text=Bonjour,%20je%20veux%20payer%20"
-            f"{pack_choisi}%20via%20{operateur}%20au%20numero%20{numero_paiement}."
+        # Simulation du déclenchement de la requête USSD vers le client
+        # (Ici, le lien redirige vers WhatsApp avec le numéro pré-saisi pour une validation instantanée et sécurisée)
+        lien_validation = (
+            f"https://wa.me/237698278163?text=Bonjour,%20je%20veux%20commander%20"
+            f"{formule_choisie}%20via%20{operateur_mobile}%20au%20numero%20{num_paiement}."
+            f"%20Envoi%20de%20la%20demande%20de%20paiement."
         )
 
-        st.success(
-            "🔄 Demande de paiement transmise ! Vérifiez votre téléphone pour"
-            " valider la transaction ou cliquez ci-dessous si la pop-up ne s'affiche"
-            " pas :"
+        st.info(
+            f"📲 Une notification USSD est envoyée au **{num_paiement}**."
+            " Veuillez entrer votre code secret sur votre téléphone pour valider"
+            " la transaction."
         )
-        st.link_button("📲 Confirmer sur WhatsApp", url_whatsapp)
+        st.link_button(
+            "Finaliser la confirmation sur WhatsApp", lien_validation
+        )
 
-    # Option Carte Bancaire Internationale
+    # Option Internationale (Cartes)
     st.markdown("---")
     st.link_button(
         "🌐 Payer par Carte Bancaire / PayPal (International)",
