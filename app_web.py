@@ -61,49 +61,48 @@ Ville : {ville}
         " équipe vous contactera sous 2 heures ouvrées."
     )
 
-    # Section de monétisation avec les différentes gammes de prix (50k à 250k FCFA)
+    # Section de monétisation avec les offres et logos/symboles de paiement
     st.markdown("---")
     st.subheader(
         "🚀 Vous souhaitez ce même système pour votre propre entreprise ?"
     )
-    st.write("Choisissez votre formule pour commander :")
+    st.write("Choisissez votre formule et votre moyen de paiement :")
 
     # Formule Standard
     st.markdown("**1. Formule Standard (50 000 FCFA)** : Appli prête à l'emploi")
     st.link_button(
-        "📱 Commander la Formule Standard (Mobile Money)",
+        "🟧 Orange Money / 🟨 MTN MoMo - Commander (50k)",
         (
             "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20commander%20la%20Formule%20Standard%20à%2050%20000%20FCFA"
         ),
     )
 
-    # Formule Pro / Avancée
+    # Formule Pro
     st.markdown(
-        "**2. Formule Pro (150 000 FCFA)** : Intégration sur mesure +"
-        " Automatisation WhatsApp"
+        "**2. Formule Pro (150 000 FCFA)** : Sur mesure + Automatisation WhatsApp"
     )
     st.link_button(
-        "📱 Commander la Formule Pro (Mobile Money)",
+        "🟧 Orange Money / 🟨 MTN MoMo - Commander (150k)",
         (
             "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20commander%20la%20Formule%20Pro%20à%20150%20000%20FCFA"
         ),
     )
 
-    # Formule Entreprise / Sur-mesure
+    # Formule Entreprise
     st.markdown(
-        "**3. Formule Entreprise (250 000 FCFA)** : Solution complète avec"
-        " nom de domaine personnalisé et support prioritaire"
+        "**3. Formule Entreprise (250 000 FCFA)** : Solution complète + Nom de"
+        " domaine"
     )
     st.link_button(
-        "📱 Commander la Formule Entreprise (Mobile Money)",
+        "🟧 Orange Money / 🟨 MTN MoMo - Commander (250k)",
         (
             "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20commander%20la%20Formule%20Entreprise%20à%20250%20000%20FCFA"
         ),
     )
 
-    # Option Carte Bancaire Internationale (pour les clients étrangers)
+    # Option Internationale (PayPal / Cartes)
     st.markdown("---")
     st.link_button(
-        "🌍 Payer par Carte Bancaire (International / Étranger)",
-        "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20payer%20par%20Carte%20Bancaire%20depuis%20l'etranger",
+        "🌐 PayPal / Carte Bancaire (Paiement International)",
+        "https://wa.me/237698278163?text=Bonjour,%20je%20veux%20payer%20par%20PayPal%20ou%20Carte%20depuis%20l'etranger",
     )
