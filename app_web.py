@@ -9,8 +9,7 @@ st.set_page_config(
 
 st.title("🤖 Assistant Virtuel de Qualification")
 st.write(
-    "Répondez à ces quelques questions pour que notre équipe vous recontacte"
-    " rapidement."
+    "Répondez à ces quelques questions pour que notre équipe vous recontacte rapidement."
 )
 
 # 1. Formulaire prospect
@@ -23,19 +22,15 @@ with st.form("form_lead"):
             "3. Autre demande",
         ],
     )
-    description = st.text_area(
-        "Décrivez clairement votre projet ou votre besoin :"
-    )
+    description = st.text_area("Décrivez clairement votre projet ou votre besoin :")
     ville = st.text_input("Dans quelle ville se situe le chantier / le besoin ?")
     nom = st.text_input("Quel est votre nom complet ?")
-    telephone = st.text_input("Quel est votre numéro de téléphone ?")
-    submit = st.form_submit_button("Envoyer ma demande")
+    telephone = st.text_input("Quel est votre numéro de téléphone (Mobile Money) ?")
+    submit = st.form_submit_button("Envoyer ma demande & Commander")
 
 if submit:
     if not nom or not telephone or not ville:
-        st.error(
-            "⚠️ Veuillez remplir au moins votre nom, votre téléphone et la ville."
-        )
+        st.error("⚠️ Veuillez remplir au moins votre nom, votre téléphone et la ville.")
     else:
         # Enregistrement des données du lead
         date_du_jour = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -53,15 +48,12 @@ Ville : {ville}
             f.write(nouveau_lead)
 
         st.success(
-            f"✅ Merci {nom} ! Vos informations ont bien été transmises. Notre"
-            " équipe vous contactera sous 2 heures ouvrées."
+            f"✅ Merci {nom} ! Vos informations ont bien été transmises. Notre équipe vous contactera sous 2 heures ouvrées."
         )
 
-        # 2. Section de Paiement Automatisé Notch Pay
+        # 2. Section de Paiement Automatisé Notch Pay (Utilise directement le numéro du client)
         st.markdown("---")
-        st.subheader(
-            "🚀 Commandez votre propre application personnalisée en 24h"
-        )
+        st.subheader("🚀 Commandez votre propre application personnalisée en 24h")
 
         formule_choisie = st.selectbox(
             "Choisissez votre formule :",
@@ -78,49 +70,54 @@ Ville : {ville}
         elif "Entreprise" in formule_choisie:
             montant = 250000
 
-        num_paiement = st.text_input(
-            "Entrez votre numéro Mobile Money (Orange ou MTN) :"
-        )
+        # On utilise directement le numéro saisi plus haut
+        num_paiement = telephone 
+        st.info(f"📱 Le paiement sera initié sur votre numéro : **{num_paiement}**")
 
         if st.button("Lancer le paiement sécurisé"):
-            if not num_paiement:
-                st.error("⚠️ Veuillez entrer un numéro de téléphone.")
-            else:
-                # Configuration de la requête vers l'API Notch Pay
-                url_notch = "https://api.notchpay.co/payments"
+            # Configuration de la requête vers l'API Notch Pay
+            url_notch = "https://api.notchpay.co/payments"
 
-                headers = {
-                    "Authorization": "sk_test.c1kgb3QK8qlvRncPIm62lgqCILZC5zTqlEBTSMWDHGGYfKqYHEHzhh7BxfRhMIbjfXYgU6eKrTfR9aJzBtWzIM6TB1LWM4JRm1H7XZUN88ONYGkqKbLD2PDZyswsE",
-                    "Content-Type": "application/json",
-                }
+            headers = {
+                "Authorization": "sk_test.c1kgb3QK8qlvRncPIm62lgqCILZC5zTqlEBTSMWDHGGYfKqYHEHzhh7BxfRhMIbjfXYgU6eKrTfR9aJzBtWzIM6TB1LWM4JRm1H7XZUN88ONYGkqKbLD2PDZyswsE",
+                "Content-Type": "application/json",
+            }
 
-                payload = {
-                    "amount": montant,
-                    "currency": "XAF",
-                    "phone": num_paiement,
-                    "description": f"Paiement {formule_choisie}",
-                    "email": "client@example.com",
-                    "name": nom,
-                }
+            payload = {
+                "amount": montant,
+                "currency": "XAF",
+                "phone": num_paiement,
+                "description": f"Paiement {formule_choisie}",
+                "email": "client@example.com",
+                "name": nom,
+            }
 
-                try:
-                    response = requests.post(url_notch, json=payload, headers=headers)
-                    data = response.json()
+            try:
+                response = requests.post(url_notch, json=payload, headers=headers)
+                data = response.json()
 
-                    if response.status_code == 200 or response.status_code == 201:
-                        st.success(
-                            "🎉 Demande de paiement initialisée avec succès ! Vérifiez votre"
-                            " téléphone pour entrer votre code secret."
-                        )
-                    else:
-                        st.error(
-                            f"❌ Erreur lors de l'initialisation : {data.get('message', 'Vérifiez les informations')}"
-                        )
-                except Exception as e:
-                    st.error(
-                        "⚠️ Impossible de contacter la passerelle de paiement pour le"
-                        " moment."
+                if response.status_code in [200, 201]:
+                    st.success(
+                        "🎉 Demande de paiement initialisée avec succès ! Vérifiez votre téléphone pour entrer votre code secret."
                     )
+                else:
+                    st.error(
+                        f"❌ Erreur lors de l'initialisation : {data.get('message', 'Vérifiez les informations')}"
+                    )
+            except Exception as e:
+                st.error(
+                    "⚠️ Impossible de contacter la passerelle de paiement pour le moment."
+                )
+
+        # 3. Section de Contact Direct (Ajouté ici)
+        st.markdown("---")
+        st.markdown("### Contactez-nous directement")
+        st.markdown("📞 Appelez-nous ou écrivez-nous au : **237 698 278 163**")
+
+        st.markdown(
+            "[Discuter sur WhatsApp](https://wa.me/237698278163?text=Bonjour,%20je%20souhaite%20un%20devis)",
+            unsafe_app_html=True if "unsafe_app_html" in globals() else True, # Sécurité syntaxique
+        )
 
         # Option Internationale
         st.markdown("---")
