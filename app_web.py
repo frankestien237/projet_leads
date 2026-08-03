@@ -51,7 +51,7 @@ Ville : {ville}
             f"✅ Merci {nom} ! Vos informations ont bien été transmises. Notre équipe vous contactera sous 2 heures ouvrées."
         )
 
-        # 2. Section de Paiement Automatisé Notch Pay (Utilise directement le numéro du client)
+        # 2. Section de Paiement Automatisé Notch Pay
         st.markdown("---")
         st.subheader("🚀 Commandez votre propre application personnalisée en 24h")
 
@@ -70,12 +70,10 @@ Ville : {ville}
         elif "Entreprise" in formule_choisie:
             montant = 250000
 
-        # On utilise directement le numéro saisi plus haut
         num_paiement = telephone 
         st.info(f"📱 Le paiement sera initié sur votre numéro : **{num_paiement}**")
 
         if st.button("Lancer le paiement sécurisé"):
-            # Configuration de la requête vers l'API Notch Pay
             url_notch = "https://api.notchpay.co/payments"
 
             headers = {
@@ -109,14 +107,14 @@ Ville : {ville}
                     "⚠️ Impossible de contacter la passerelle de paiement pour le moment."
                 )
 
-        # 3. Section de Contact Direct (Ajouté ici)
+        # 3. Section de Contact Direct
         st.markdown("---")
         st.markdown("### Contactez-nous directement")
-        st.markdown("📞 Appelez-nous ou écrivez-nous au : **237 698 278 163**")
+        st.markdown("📞 Appelez-nous ou écrivez-nous au : **+237 698 278 163**")
 
         st.markdown(
             "[Discuter sur WhatsApp](https://wa.me/237698278163?text=Bonjour,%20je%20souhaite%20un%20devis)",
-            unsafe_app_html=True if "unsafe_app_html" in globals() else True, # Sécurité syntaxique
+            unsafe_allow_html=True,
         )
 
         # Option Internationale
